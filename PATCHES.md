@@ -81,3 +81,25 @@ Upstream files touched:
 - `packages/email/templates/team-email-removed.tsx`: rewritten on `PaperRocketEmail`, same exports and props.
 
 New, not upstream: `scripts/paperrocket/render-snapshots.ts`.
+
+## Brand pass (pr.2)
+
+Nothing a signer, recipient or logged-out visitor sees says Documenso. The instance's own name comes from `NEXT_PUBLIC_BRAND_NAME` (unset: "Document signing"). New env vars: `NEXT_PUBLIC_BRAND_NAME`, `NEXT_PUBLIC_OIDC_PROVIDER_LOGO_URL`, `NEXT_PUBLIC_DISABLE_PASSKEY_SIGNIN`. Lingui msgids changed, so non-English locales fall back to English for the changed strings.
+
+Upstream files touched:
+- `packages/lib/constants/app.ts`: adds `BRAND_NAME()` and `SOURCE_CODE_URL`; the PDF signing reason fallback is now "Signed with <brand>".
+- `apps/remix/app/utils/meta.ts`: rewritten brand-neutral (title, description, og and twitter tags; keywords, author and twitter:site removed).
+- `packages/lib/jobs/definitions/emails/send-admin-user-created-email.handler.ts`: subject "Your signing account is ready".
+- `packages/lib/jobs/definitions/emails/send-account-disabled-email.handler.ts`: subject "Your signing account has been disabled".
+- `packages/lib/server-only/team/delete-team.ts`, `create-team-email-verification.ts`, `organisation/create-organisation-member-invites.ts`: " on Documenso" dropped from subjects.
+- `packages/lib/server-only/2fa/setup-2fa.ts`: authenticator app issuer is the brand.
+- `packages/lib/utils/authenticator.ts`: passkey relying party name is the brand.
+- `apps/remix/app/routes/_recipient+/_layout.tsx`: tab title "Sign Document - <brand>".
+- `apps/remix/app/routes/_recipient+/sign.$token+/_index.tsx`: removed the "Check out Documenso" marketing line on cancelled documents (two places).
+- `apps/remix/app/routes/_unauthenticated+/articles.signature-disclosure.tsx`, `organisation.invite.$token.tsx`, `verify-email.$token.tsx`, `o.$orgUrl.signin.tsx`: product name replaced by the brand or dropped.
+- `apps/remix/app/routes/_profile+/_layout.tsx`, `_profile+/p.$url.tsx`, `_share+/share.$slug.tsx`, `apps/remix/app/components/general/document/document-certificate-qr-view.tsx`: same, for public profile, share and QR certificate views.
+- `apps/remix/app/components/general/public-legal-links.tsx`: always adds a quiet "Source code" link (AGPL section 13), so it shows in the sign-in footer, the signing page and the signer menu.
+- `apps/remix/app/components/forms/signin.tsx`: optional OIDC logo image and the passkey button switch.
+- `.env.example`, `docs/rolling-a-tag.md`: the new env vars.
+
+Deliberately left (not visible to signers or logged-out visitors): admin and settings screens, API token and webhook dialogs, authenticated app header and nav, embed screens, expired-licence banner, organisation billing banner, support page, docs, the Documenso wordmark in `branding-logo.tsx` (shown only when a team has no logo set), sender name default (set by `NEXT_PRIVATE_SMTP_FROM_NAME`), `X-Documenso-*` mail and webhook headers, the email-2FA issuer (never shown).

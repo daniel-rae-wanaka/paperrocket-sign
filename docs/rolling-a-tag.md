@@ -29,6 +29,9 @@ From a logged-out browser or `curl`:
 - reply-to email set (the footer says replies reach the sender)
 - `NEXT_PUBLIC_SUPPORT_EMAIL` set, or screens fall back to the upstream support address
 - `usePlaywrightPdf` off
+- `NEXT_PUBLIC_BRAND_NAME` set to the business name (tab titles, meta tags, signer-facing text, 2FA and passkey names, PDF signing reason); unset shows "Document signing"
+- `NEXT_PUBLIC_OIDC_PROVIDER_LOGO_URL` set to the identity provider's logo (about 20px high) if the OIDC button should show it; unset keeps the default icon
+- `NEXT_PUBLIC_DISABLE_PASSKEY_SIGNIN=true` where passkeys are not offered (hides the Passkey button)
 
 ## 5. Roll back
 
