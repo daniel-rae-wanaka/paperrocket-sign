@@ -1,3 +1,4 @@
+import { BRAND_NAME } from '@documenso/lib/constants/app';
 import {
   EnvelopeRenderProvider,
   useCurrentEnvelopeRender,
@@ -49,6 +50,7 @@ export const DocumentCertificateQRView = ({
   completedDate,
   token,
 }: DocumentCertificateQRViewProps) => {
+  const brand = BRAND_NAME();
   const { data: documentViaUser } = trpc.document.get.useQuery({
     documentId,
   });
@@ -76,7 +78,7 @@ export const DocumentCertificateQRView = ({
 
               <DialogDescription>
                 <Trans>
-                  This document is available in your Documenso account. You can view more details, recipients, and audit
+                  This document is available in your {brand} account. You can view more details, recipients, and audit
                   logs there.
                 </Trans>
               </DialogDescription>

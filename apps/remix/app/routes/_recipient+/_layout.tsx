@@ -1,3 +1,4 @@
+import { BRAND_NAME } from '@documenso/lib/constants/app';
 import { useAnalytics } from '@documenso/lib/client-only/hooks/use-analytics';
 import { useOptionalSession } from '@documenso/lib/client-only/providers/session';
 import { cn } from '@documenso/ui/lib/utils';
@@ -14,7 +15,7 @@ import type { Route } from './+types/_layout';
 
 export function meta() {
   return [
-    { title: i18n._(msg`Sign Document - Documenso`) },
+    { title: `${i18n._(msg`Sign Document`)} - ${BRAND_NAME()}` },
     { name: 'robots', content: 'noindex, nofollow, noarchive, nosnippet, noimageindex' },
   ];
 }

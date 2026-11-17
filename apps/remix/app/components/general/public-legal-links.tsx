@@ -2,6 +2,7 @@ import {
   NEXT_PUBLIC_IMPRINT_URL,
   NEXT_PUBLIC_PRIVACY_POLICY_URL,
   NEXT_PUBLIC_TERMS_OF_SERVICE_URL,
+  SOURCE_CODE_URL,
 } from '@documenso/lib/constants/app';
 import { cn } from '@documenso/ui/lib/utils';
 import { DropdownMenuItem, DropdownMenuSeparator } from '@documenso/ui/primitives/dropdown-menu';
@@ -77,6 +78,8 @@ const getPublicLegalLinks = () => {
     termsUrl ? { label: msg`Terms of Service`, href: termsUrl } : null,
     privacyUrl ? { label: msg`Privacy Policy`, href: privacyUrl } : null,
     imprintUrl ? { label: msg`Imprint`, href: imprintUrl } : null,
+    // paperrocket-sign: AGPL section 13 source offer, always shown.
+    { label: msg`Source code`, href: SOURCE_CODE_URL },
   ];
 
   return links.filter((link) => link !== null);

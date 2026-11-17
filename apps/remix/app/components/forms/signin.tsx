@@ -96,6 +96,10 @@ export const SignInForm = ({
   const hasSocialAuthEnabled = isGoogleSSOEnabled || isMicrosoftSSOEnabled || isOIDCSSOEnabled;
 
   const turnstileSiteKey = env('NEXT_PUBLIC_TURNSTILE_SITE_KEY');
+
+  // paperrocket-sign: brand pass. Optional provider logo and passkey switch, read like the Turnstile key above.
+  const oidcProviderLogoUrl = env('NEXT_PUBLIC_OIDC_PROVIDER_LOGO_URL');
+  const isPasskeySigninDisabled = env('NEXT_PUBLIC_DISABLE_PASSKEY_SIGNIN') === 'true';
   const turnstileRef = useRef<TurnstileInstance>(null);
   const twoFactorTurnstileRef = useRef<TurnstileInstance>(null);
 
@@ -455,23 +459,29 @@ export const SignInForm = ({
               disabled={isSubmitting}
               onClick={onSignInWithOIDCClick}
             >
-              <FaIdCardClip className="mr-2 h-5 w-5" />
+              {oidcProviderLogoUrl ? (
+                <img src={oidcProviderLogoUrl} alt="" aria-hidden="true" className="mr-2 h-5 w-auto" />
+              ) : (
+                <FaIdCardClip className="mr-2 h-5 w-5" />
+              )}
               {oidcProviderLabel || 'OIDC'}
             </Button>
           )}
 
-          <Button
-            type="button"
-            size="lg"
-            variant="outline"
-            disabled={isSubmitting}
-            loading={isPasskeyLoading}
-            className="border bg-background text-muted-foreground"
-            onClick={onSignInWithPasskey}
-          >
-            {!isPasskeyLoading && <KeyRoundIcon className="mr-1 -ml-1 h-5 w-5" />}
-            <Trans>Passkey</Trans>
-          </Button>
+          {!isPasskeySigninDisabled && (
+            <Button
+              type="button"
+              size="lg"
+              variant="outline"
+              disabled={isSubmitting}
+              loading={isPasskeyLoading}
+              className="border bg-background text-muted-foreground"
+              onClick={onSignInWithPasskey}
+            >
+              {!isPasskeyLoading && <KeyRoundIcon className="mr-1 -ml-1 h-5 w-5" />}
+              <Trans>Passkey</Trans>
+            </Button>
+          )}
         </fieldset>
       </form>
 

@@ -1,4 +1,4 @@
-import { NEXT_PUBLIC_WEBAPP_URL } from '@documenso/lib/constants/app';
+import { BRAND_NAME, NEXT_PUBLIC_WEBAPP_URL } from '@documenso/lib/constants/app';
 import { getDocumentByAccessToken } from '@documenso/lib/server-only/document/get-document-by-access-token';
 import { redirect, useLoaderData } from 'react-router';
 
@@ -12,15 +12,15 @@ export function meta({ params: { slug } }: Route.MetaArgs) {
   }
 
   return [
-    { title: 'Documenso - Share' },
-    { description: 'I just signed a document in style with Documenso!' },
+    { title: `Shared document - ${BRAND_NAME()}` },
+    { description: `I just signed a document with ${BRAND_NAME()}.` },
     {
       property: 'og:title',
-      content: 'Documenso - Join the open source signing revolution',
+      content: BRAND_NAME(),
     },
     {
       property: 'og:description',
-      content: 'I just signed with Documenso!',
+      content: `I just signed with ${BRAND_NAME()}.`,
     },
     {
       property: 'og:type',
@@ -29,10 +29,6 @@ export function meta({ params: { slug } }: Route.MetaArgs) {
     {
       property: 'og:image',
       content: `${NEXT_PUBLIC_WEBAPP_URL()}/share/${slug}/opengraph`,
-    },
-    {
-      name: 'twitter:site',
-      content: '@documenso',
     },
     {
       name: 'twitter:card',
@@ -44,7 +40,7 @@ export function meta({ params: { slug } }: Route.MetaArgs) {
     },
     {
       name: 'twitter:description',
-      content: 'I just signed with Documenso!',
+      content: `I just signed with ${BRAND_NAME()}.`,
     },
   ];
 }

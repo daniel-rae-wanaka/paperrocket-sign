@@ -45,6 +45,9 @@ jobs:
       - name: Unit tests (zoned time formatting)
         if: hashFiles('packages/lib/server-only/pdf/format-zoned-time.test.ts') != ''
         run: npm run test -w @documenso/lib -- server-only/pdf/format-zoned-time.test.ts
+      - name: Unit tests (Replace PDF, tags win)
+        if: hashFiles('packages/lib/server-only/envelope-item/select-fields-superseded-by-tags.test.ts') != ''
+        run: npm run test -w @documenso/lib -- server-only/envelope-item/select-fields-superseded-by-tags.test.ts
       - name: Build app
         run: npm run build
       - name: Render email and certificate snapshots
@@ -92,4 +95,4 @@ jobs:
           context: .
           file: ./docker/Dockerfile
           push: true
-          tags: ghcr.io/daniel-paperrocket/paperrocket-sign:${{ github.ref_name }}
+          tags: ghcr.io/daniel-rae-wanaka/paperrocket-sign:${{ github.ref_name }}

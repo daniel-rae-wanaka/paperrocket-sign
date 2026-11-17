@@ -81,3 +81,41 @@ Upstream files touched:
 - `packages/email/templates/team-email-removed.tsx`: rewritten on `PaperRocketEmail`, same exports and props.
 
 New, not upstream: `scripts/paperrocket/render-snapshots.ts`.
+
+## Brand pass (pr.2)
+
+Nothing a signer, recipient or logged-out visitor sees says Documenso. The instance's own name comes from `NEXT_PUBLIC_BRAND_NAME` (unset: "Document signing"). New env vars: `NEXT_PUBLIC_BRAND_NAME`, `NEXT_PUBLIC_OIDC_PROVIDER_LOGO_URL`, `NEXT_PUBLIC_DISABLE_PASSKEY_SIGNIN`. Lingui msgids changed, so non-English locales fall back to English for the changed strings.
+
+Upstream files touched:
+- `packages/lib/constants/app.ts`: adds `BRAND_NAME()` and `SOURCE_CODE_URL`; the PDF signing reason fallback is now "Signed with <brand>".
+- `apps/remix/app/utils/meta.ts`: rewritten brand-neutral (title, description, og and twitter tags; keywords, author and twitter:site removed).
+- `packages/lib/jobs/definitions/emails/send-admin-user-created-email.handler.ts`: subject "Your signing account is ready".
+- `packages/lib/jobs/definitions/emails/send-account-disabled-email.handler.ts`: subject "Your signing account has been disabled".
+- `packages/lib/server-only/team/delete-team.ts`, `create-team-email-verification.ts`, `organisation/create-organisation-member-invites.ts`: " on Documenso" dropped from subjects.
+- `packages/lib/server-only/2fa/setup-2fa.ts`: authenticator app issuer is the brand.
+- `packages/lib/utils/authenticator.ts`: passkey relying party name is the brand.
+- `apps/remix/app/routes/_recipient+/_layout.tsx`: tab title "Sign Document - <brand>".
+- `apps/remix/app/routes/_recipient+/sign.$token+/_index.tsx`: removed the "Check out Documenso" marketing line on cancelled documents (two places).
+- `apps/remix/app/routes/_unauthenticated+/articles.signature-disclosure.tsx`, `organisation.invite.$token.tsx`, `verify-email.$token.tsx`, `o.$orgUrl.signin.tsx`: product name replaced by the brand or dropped.
+- `apps/remix/app/routes/_profile+/_layout.tsx`, `_profile+/p.$url.tsx`, `_share+/share.$slug.tsx`, `apps/remix/app/components/general/document/document-certificate-qr-view.tsx`: same, for public profile, share and QR certificate views.
+- `apps/remix/app/components/general/public-legal-links.tsx`: always adds a quiet "Source code" link (AGPL section 13), so it shows in the sign-in footer, the signing page and the signer menu.
+- `apps/remix/app/components/forms/signin.tsx`: optional OIDC logo image and the passkey button switch.
+- `.env.example`, `docs/rolling-a-tag.md`: the new env vars.
+
+Deliberately left (not visible to signers or logged-out visitors): admin and settings screens, API token and webhook dialogs, authenticated app header and nav, embed screens, expired-licence banner, organisation billing banner, support page, docs, the Documenso wordmark in `branding-logo.tsx` (shown only when a team has no logo set), sender name default (set by `NEXT_PRIVATE_SMTP_FROM_NAME`), `X-Documenso-*` mail and webhook headers, the email-2FA issuer (never shown).
+
+## Brand pass (pr.2): app header mark
+
+The logged-in header no longer shows the Documenso logo or wordmark. New `apps/remix/app/components/general/app-brand-mark.tsx` shows the organisation's own logo (`/api/branding/logo/organisation/<id>`, falls back when the route answers 404 or 400) and otherwise the `NEXT_PUBLIC_BRAND_NAME` text. Upstream files touched:
+- `apps/remix/app/components/general/app-header.tsx`: `BrandingLogo` replaced by `AppBrandMark`.
+- `apps/remix/app/components/general/app-nav-mobile.tsx`: Documenso logo image in the mobile menu replaced by `AppBrandMark`.
+- `apps/remix/app/components/general/envelope-editor/envelope-editor-header.tsx`: non-embedded fallback logo replaced by `AppBrandMark`.
+- `apps/remix/app/components/general/envelope-signing/envelope-signer-header.tsx`: fallback (no team logo) replaced by `AppBrandMark`.
+- `apps/remix/app/routes/_profile+/_layout.tsx`: public profile header logos replaced by `AppBrandMark` (and the earlier alt text edit there is gone).
+`branding-logo.tsx` stays for the embed, certificate and audit-log HTML routes.
+
+## Replace PDF: tags win
+
+When a replacement PDF carries `{{SIGNATURE, r1}}`-style tags, upstream kept every existing field and created the tagged ones on top, so each tagged field existed twice. Now, inside the same transaction and before `createMany`, existing fields on that envelope item whose (type, recipientId) pair a tag recreates are deleted. Other types and recipients stay.
+- `packages/lib/server-only/envelope-item/replace-envelope-item-pdf.ts`: the delete before `createMany`.
+New, not upstream: `packages/lib/server-only/envelope-item/select-fields-superseded-by-tags.ts` and `.test.ts` (pure choice of ids, unit tested).

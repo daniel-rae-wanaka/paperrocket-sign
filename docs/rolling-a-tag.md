@@ -1,7 +1,7 @@
 # Rolling a tag to a signing site
 
 Generic steps for moving a site running stock `documenso/documenso:<version>` to our image
-`ghcr.io/daniel-paperrocket/paperrocket-sign:v<upstream>-pr.<n>`. Site names, hosts, paths and secrets are not in this repo: the real runbook is private. Placeholders are in angle brackets.
+`ghcr.io/daniel-rae-wanaka/paperrocket-sign:v<upstream>-pr.<n>`. Site names, hosts, paths and secrets are not in this repo: the real runbook is private. Placeholders are in angle brackets.
 
 **Before starting:** the tag exists, its image build is green, and the security hold on that site is cleared.
 
@@ -29,6 +29,9 @@ From a logged-out browser or `curl`:
 - reply-to email set (the footer says replies reach the sender)
 - `NEXT_PUBLIC_SUPPORT_EMAIL` set, or screens fall back to the upstream support address
 - `usePlaywrightPdf` off
+- `NEXT_PUBLIC_BRAND_NAME` set to the business name (tab titles, meta tags, signer-facing text, 2FA and passkey names, PDF signing reason); unset shows "Document signing"
+- `NEXT_PUBLIC_OIDC_PROVIDER_LOGO_URL` set to the identity provider's logo (about 20px high) if the OIDC button should show it; unset keeps the default icon
+- `NEXT_PUBLIC_DISABLE_PASSKEY_SIGNIN=true` where passkeys are not offered (hides the Passkey button)
 
 ## 5. Roll back
 

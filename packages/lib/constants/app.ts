@@ -6,6 +6,12 @@ export const APP_DOCUMENT_UPLOAD_SIZE_LIMIT = Number(env('NEXT_PUBLIC_DOCUMENT_S
 
 export const NEXT_PUBLIC_WEBAPP_URL = () => env('NEXT_PUBLIC_WEBAPP_URL') ?? 'http://localhost:3000';
 
+// paperrocket-sign: brand pass. The instance's own name, used wherever upstream printed the product name.
+export const BRAND_NAME = () => env('NEXT_PUBLIC_BRAND_NAME') || 'Document signing';
+
+// paperrocket-sign: AGPL section 13 source offer.
+export const SOURCE_CODE_URL = 'https://github.com/daniel-rae-wanaka/paperrocket-sign';
+
 /**
  * The sub-path the app is served under (no trailing slash), e.g. "/ESign".
  * Returns an empty string when served at root.
@@ -101,7 +107,7 @@ export const IS_AI_FEATURES_CONFIGURED = (): boolean => {
 export const NEXT_PRIVATE_USE_PLAYWRIGHT_PDF = () => env('NEXT_PRIVATE_USE_PLAYWRIGHT_PDF') === 'true';
 
 export const NEXT_PRIVATE_SIGNING_TIMESTAMP_AUTHORITY = () => env('NEXT_PRIVATE_SIGNING_TIMESTAMP_AUTHORITY');
-export const NEXT_PRIVATE_SIGNING_REASON = () => env('NEXT_PRIVATE_SIGNING_REASON') || 'Signed by Documenso';
+export const NEXT_PRIVATE_SIGNING_REASON = () => env('NEXT_PRIVATE_SIGNING_REASON') || `Signed with ${BRAND_NAME()}`;
 
 export const NEXT_PRIVATE_SIGNING_TRANSPORT = () => env('NEXT_PRIVATE_SIGNING_TRANSPORT') || 'local';
 

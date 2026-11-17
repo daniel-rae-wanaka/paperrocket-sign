@@ -1,4 +1,4 @@
-import { NEXT_PUBLIC_WEBAPP_URL } from '../constants/app';
+import { BRAND_NAME, NEXT_PUBLIC_WEBAPP_URL } from '../constants/app';
 import { PASSKEY_TIMEOUT } from '../constants/auth';
 
 /**
@@ -9,7 +9,7 @@ export const getAuthenticatorOptions = () => {
   const rpId = webAppBaseUrl.hostname;
 
   return {
-    rpName: 'Documenso',
+    rpName: BRAND_NAME(), // paperrocket-sign: brand pass
     rpId,
     origin: NEXT_PUBLIC_WEBAPP_URL(),
     timeout: PASSKEY_TIMEOUT,
