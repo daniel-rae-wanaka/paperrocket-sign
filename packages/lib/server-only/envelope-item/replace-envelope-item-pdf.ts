@@ -10,6 +10,7 @@ import { assertEnvelopeMutable } from '../envelope/assert-envelope-mutable';
 import { convertPlaceholdersToFieldInputs, extractPdfPlaceholders } from '../pdf/auto-place-fields';
 import { findRecipientByPlaceholder } from '../pdf/helpers';
 import { insertFormValuesInPdf } from '../pdf/insert-form-values-in-pdf';
+import { selectFieldsSupersededByTags } from './select-fields-superseded-by-tags';
 
 type UnsafeReplaceEnvelopeItemPdfOptions = {
   envelope: Pick<Envelope, 'id' | 'type' | 'formValues'>;
@@ -161,6 +162,18 @@ export const UNSAFE_replaceEnvelopeItemPdf = async ({
       );
 
       if (fieldsToCreate.length > 0) {
+        // paperrocket-sign: Replace PDF, tags win. Drop the old fields the tags recreate so none end up twice.
+        const existingFields = await tx.field.findMany({
+          where: { envelopeId: envelope.id, envelopeItemId },
+          select: { id: true, type: true, recipientId: true },
+        });
+
+        const supersededIds = selectFieldsSupersededByTags(existingFields, fieldsToCreate);
+
+        if (supersededIds.length > 0) {
+          await tx.field.deleteMany({ where: { id: { in: supersededIds } } });
+        }
+
         await tx.field.createMany({
           data: fieldsToCreate.map((field) => ({
             envelopeId: envelope.id,

@@ -113,3 +113,9 @@ The logged-in header no longer shows the Documenso logo or wordmark. New `apps/r
 - `apps/remix/app/components/general/envelope-signing/envelope-signer-header.tsx`: fallback (no team logo) replaced by `AppBrandMark`.
 - `apps/remix/app/routes/_profile+/_layout.tsx`: public profile header logos replaced by `AppBrandMark` (and the earlier alt text edit there is gone).
 `branding-logo.tsx` stays for the embed, certificate and audit-log HTML routes.
+
+## Replace PDF: tags win
+
+When a replacement PDF carries `{{SIGNATURE, r1}}`-style tags, upstream kept every existing field and created the tagged ones on top, so each tagged field existed twice. Now, inside the same transaction and before `createMany`, existing fields on that envelope item whose (type, recipientId) pair a tag recreates are deleted. Other types and recipients stay.
+- `packages/lib/server-only/envelope-item/replace-envelope-item-pdf.ts`: the delete before `createMany`.
+New, not upstream: `packages/lib/server-only/envelope-item/select-fields-superseded-by-tags.ts` and `.test.ts` (pure choice of ids, unit tested).
