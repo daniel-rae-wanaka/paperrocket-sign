@@ -3,7 +3,7 @@ import { useAnalytics } from '@documenso/lib/client-only/hooks/use-analytics';
 import { SessionProvider } from '@documenso/lib/client-only/providers/session';
 import { getBasePath } from '@documenso/lib/constants/app';
 import { APP_I18N_OPTIONS, type SupportedLanguageCodes } from '@documenso/lib/constants/i18n';
-import { createPublicEnv } from '@documenso/lib/utils/env';
+import { createPublicEnv, env } from '@documenso/lib/utils/env';
 import { extractLocaleData } from '@documenso/lib/utils/i18n';
 import { TrpcProvider } from '@documenso/trpc/react';
 import { getOrganisationSession } from '@documenso/trpc/server/organisation-router/get-organisation-session';
@@ -134,11 +134,22 @@ export function LayoutContent({ children }: { children: React.ReactNode }) {
     <html translate="no" lang={lang} data-theme={theme} className={theme ?? ''} suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
-        <link rel="apple-touch-icon" sizes="180x180" href={`${basePath}/apple-touch-icon.png`} />
-        <link rel="icon" type="image/png" sizes="32x32" href={`${basePath}/favicon-32x32.png`} />
-        <link rel="icon" type="image/png" sizes="16x16" href={`${basePath}/favicon-16x16.png`} />
+        {/* paperrocket-sign: icons overridable by env, neutral glyph otherwise. */}
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href={env('NEXT_PUBLIC_APPLE_TOUCH_ICON_URL') || `${basePath}/apple-touch-icon.png`}
+        />
+        {env('NEXT_PUBLIC_FAVICON_URL') ? (
+          <link rel="icon" href={env('NEXT_PUBLIC_FAVICON_URL')} />
+        ) : (
+          <>
+            <link rel="icon" type="image/png" sizes="32x32" href={`${basePath}/favicon-32x32.png`} />
+            <link rel="icon" type="image/png" sizes="16x16" href={`${basePath}/favicon-16x16.png`} />
+          </>
+        )}
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="manifest" href={`${basePath}/site.webmanifest`} />
+        <link rel="manifest" href={`${basePath}/api/paperrocket/manifest.webmanifest`} />
         <meta name="google" content="notranslate" />
         <Meta />
         <Links nonce={nonce(cspNonce)} />
