@@ -95,4 +95,4 @@ jobs:
           context: .
           file: ./docker/Dockerfile
           push: true
-          tags: ghcr.io/daniel-paperrocket/paperrocket-sign:${{ github.ref_name }}
+          tags: ghcr.io/daniel-rae-wanaka/paperrocket-sign:${{ github.ref_name }}

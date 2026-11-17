@@ -1,7 +1,7 @@
 # Rolling a tag to a signing site
 
 Generic steps for moving a site running stock `documenso/documenso:<version>` to our image
-`ghcr.io/daniel-paperrocket/paperrocket-sign:v<upstream>-pr.<n>`. Site names, hosts, paths and secrets are not in this repo: the real runbook is private. Placeholders are in angle brackets.
+`ghcr.io/daniel-rae-wanaka/paperrocket-sign:v<upstream>-pr.<n>`. Site names, hosts, paths and secrets are not in this repo: the real runbook is private. Placeholders are in angle brackets.
 
 **Before starting:** the tag exists, its image build is green, and the security hold on that site is cleared.
 
