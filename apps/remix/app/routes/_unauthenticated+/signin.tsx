@@ -9,7 +9,9 @@ import {
   isSignupEnabledForProvider,
   OIDC_PROVIDER_LABEL,
 } from '@documenso/lib/constants/auth';
+import { env } from '@documenso/lib/utils/env';
 import { isValidReturnTo, normalizeReturnTo } from '@documenso/lib/utils/is-valid-return-to';
+import { getButtonColours } from '@documenso/lib/utils/primary-colour';
 import { Alert, AlertDescription } from '@documenso/ui/primitives/alert';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
@@ -49,6 +51,10 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const oidcProviderLabel = OIDC_PROVIDER_LABEL;
 
+  // paperrocket-sign: optional OIDC button text and colour, read at runtime on the server.
+  const oidcButtonText = env('PR_LOGIN_BUTTON_TEXT')?.trim() || undefined;
+  const oidcButtonColours = getButtonColours(env('PR_LOGIN_BUTTON_COLOR'));
+
   const isSignupEnabled =
     isSignupEnabledForProvider('email') ||
     (IS_GOOGLE_SSO_ENABLED && isSignupEnabledForProvider('google')) ||
@@ -69,6 +75,8 @@ export async function loader({ request }: Route.LoaderArgs) {
     isMicrosoftSSOEnabled,
     isOIDCSSOEnabled,
     isSignupEnabled,
+    oidcButtonColours,
+    oidcButtonText,
     oidcProviderLabel,
     returnTo,
     shouldAutoRedirectToOIDC,
@@ -82,6 +90,8 @@ export default function SignIn({ loaderData }: Route.ComponentProps) {
     isMicrosoftSSOEnabled,
     isOIDCSSOEnabled,
     isSignupEnabled,
+    oidcButtonColours,
+    oidcButtonText,
     oidcProviderLabel,
     returnTo,
     shouldAutoRedirectToOIDC,
@@ -139,6 +149,8 @@ export default function SignIn({ loaderData }: Route.ComponentProps) {
           isMicrosoftSSOEnabled={isMicrosoftSSOEnabled}
           isOIDCSSOEnabled={isOIDCSSOEnabled}
           oidcProviderLabel={oidcProviderLabel}
+          oidcButtonText={oidcButtonText}
+          oidcButtonColours={oidcButtonColours}
           returnTo={returnTo}
         />
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getPrimaryColourCss, getPrimaryColourVars } from './primary-colour';
+import { getButtonColours, getPrimaryColourCss, getPrimaryColourVars } from './primary-colour';
 
 describe('getPrimaryColourVars', () => {
   it('uses white text on a dark colour', () => {
@@ -36,5 +36,21 @@ describe('getPrimaryColourCss', () => {
 
   it('is null for an invalid colour', () => {
     expect(getPrimaryColourCss('}</style><script>')).toBeNull();
+  });
+});
+
+describe('getButtonColours', () => {
+  it('uses white text on a dark blue', () => {
+    expect(getButtonColours('#3066BB')).toEqual({ background: '#3066bb', foreground: '#ffffff' });
+  });
+
+  it('uses near-black text on a light colour', () => {
+    expect(getButtonColours('#fde047')?.foreground).toBe('#111827');
+  });
+
+  it('returns null for empty or invalid input', () => {
+    expect(getButtonColours(undefined)).toBeNull();
+    expect(getButtonColours('  ')).toBeNull();
+    expect(getButtonColours('red; } body { display: none')).toBeNull();
   });
 });

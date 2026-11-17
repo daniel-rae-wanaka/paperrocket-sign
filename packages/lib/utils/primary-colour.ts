@@ -60,3 +60,33 @@ export const getPrimaryColourCss = (input: string | null | undefined): string | 
 
   return `html:root, html.dark:root, html[data-theme='dark']:root { --primary: ${vars.primary}; --primary-foreground: ${vars.primaryForeground}; }`;
 };
+
+/**
+ * paperrocket-sign: solid colours for the sign-in page's OIDC button (`PR_LOGIN_BUTTON_COLOR`). Hex background and a
+ * white or near-black text colour by the same contrast rule, or null when the input is empty or not a colour. Only
+ * computed values are returned, so nothing from the input reaches the page.
+ */
+export const getButtonColours = (
+  input: string | null | undefined,
+): { background: string; foreground: string } | null => {
+  const trimmed = input?.trim();
+
+  if (!trimmed) {
+    return null;
+  }
+
+  const colour = colord(trimmed);
+
+  if (!colour.isValid()) {
+    return null;
+  }
+
+  const background = luminance(colour.toRgb());
+
+  const useWhite = contrast(background, 1) >= contrast(background, luminance(NEAR_BLACK));
+
+  return {
+    background: colour.alpha(1).toHex(),
+    foreground: useWhite ? '#ffffff' : '#111827',
+  };
+};

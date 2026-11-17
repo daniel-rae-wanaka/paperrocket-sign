@@ -114,6 +114,10 @@ The logged-in header no longer shows the Documenso logo or wordmark. New `apps/r
 - `apps/remix/app/routes/_profile+/_layout.tsx`: public profile header logos replaced by `AppBrandMark` (and the earlier alt text edit there is gone).
 `branding-logo.tsx` stays for the embed, certificate and audit-log HTML routes.
 
+## Sign-in button
+
+- **OIDC button text and colour:** `PR_LOGIN_BUTTON_TEXT` replaces the provider label on the sign-in page's OIDC button (the label itself still names the provider elsewhere, e.g. "Redirecting to ..."), and `PR_LOGIN_BUTTON_COLOR` makes it a solid button in that colour with white or near-black text by the same WCAG rule as the primary colour (`getButtonColours` in `packages/lib/utils/primary-colour.ts`, unit tested; only the computed hex reaches the page, as an inline style). The button grows and wraps instead of clipping a long label. Both are read in the `/signin` loader on the server, so they need no `NEXT_PUBLIC_` prefix and no rebuild. Unset, the button is stock. Only visible when the page is not auto-redirecting to OIDC (`NEXT_PUBLIC_DISABLE_OIDC_AUTO_REDIRECT=true`, or another sign-in method enabled). Files: `apps/remix/app/routes/_unauthenticated+/signin.tsx`, `apps/remix/app/components/forms/signin.tsx`, `.env.example`.
+
 ## Replace PDF: tags win
 
 When a replacement PDF carries `{{SIGNATURE, r1}}`-style tags, upstream kept every existing field and created the tagged ones on top, so each tagged field existed twice. Now, inside the same transaction and before `createMany`, existing fields on that envelope item whose (type, recipientId) pair a tag recreates are deleted. Other types and recipients stay.

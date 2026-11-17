@@ -64,6 +64,10 @@ export type SignInFormProps = {
   isMicrosoftSSOEnabled?: boolean;
   isOIDCSSOEnabled?: boolean;
   oidcProviderLabel?: string;
+  /** paperrocket-sign: replaces the provider label on the OIDC button (PR_LOGIN_BUTTON_TEXT). */
+  oidcButtonText?: string;
+  /** paperrocket-sign: solid OIDC button colours (PR_LOGIN_BUTTON_COLOR), already validated. */
+  oidcButtonColours?: { background: string; foreground: string } | null;
   returnTo?: string;
 
   hideForgotPassword?: boolean;
@@ -80,6 +84,8 @@ export const SignInForm = ({
   isMicrosoftSSOEnabled,
   isOIDCSSOEnabled,
   oidcProviderLabel,
+  oidcButtonText,
+  oidcButtonColours,
   returnTo,
   hideForgotPassword = false,
   onUnverifiedEmail,
@@ -455,7 +461,20 @@ export const SignInForm = ({
               type="button"
               size="lg"
               variant="outline"
-              className="border bg-background text-muted-foreground"
+              className={
+                oidcButtonColours
+                  ? 'h-auto min-h-11 whitespace-normal border transition-opacity hover:opacity-90'
+                  : 'border bg-background text-muted-foreground'
+              }
+              style={
+                oidcButtonColours
+                  ? {
+                      backgroundColor: oidcButtonColours.background,
+                      borderColor: oidcButtonColours.background,
+                      color: oidcButtonColours.foreground,
+                    }
+                  : undefined
+              }
               disabled={isSubmitting}
               onClick={onSignInWithOIDCClick}
             >
@@ -464,7 +483,7 @@ export const SignInForm = ({
               ) : (
                 <FaIdCardClip className="mr-2 h-5 w-5" />
               )}
-              {oidcProviderLabel || 'OIDC'}
+              {oidcButtonText || oidcProviderLabel || 'OIDC'}
             </Button>
           )}
 
