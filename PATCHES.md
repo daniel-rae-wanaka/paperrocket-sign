@@ -119,3 +119,10 @@ The logged-in header no longer shows the Documenso logo or wordmark. New `apps/r
 When a replacement PDF carries `{{SIGNATURE, r1}}`-style tags, upstream kept every existing field and created the tagged ones on top, so each tagged field existed twice. Now, inside the same transaction and before `createMany`, existing fields on that envelope item whose (type, recipientId) pair a tag recreates are deleted. Other types and recipients stay.
 - `packages/lib/server-only/envelope-item/replace-envelope-item-pdf.ts`: the delete before `createMany`.
 New, not upstream: `packages/lib/server-only/envelope-item/select-fields-superseded-by-tags.ts` and `.test.ts` (pure choice of ids, unit tested).
+
+## PR3 polish
+
+Small fixes found on the first real use. Each is env or setting driven; nothing names a client.
+
+- **Subjects:** "Signing Complete!" is now "Signed: <document title>" and "Document Deleted!" is "Document deleted: <document title>" (`send-document-completed-emails.handler.ts`, `send-delete-email.ts`).
+- **Signing complete page:** shows the team logo (same rule as the signing header: branding on and a logo set) or the brand mark above the document title, and `NEXT_PUBLIC_DISABLE_SIGNING_SHARE=true` hides the "Share" signing card button. File: `apps/remix/app/routes/_recipient+/sign.$token+/complete.tsx`.
