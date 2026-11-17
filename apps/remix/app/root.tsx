@@ -3,6 +3,7 @@ import { useAnalytics } from '@documenso/lib/client-only/hooks/use-analytics';
 import { SessionProvider } from '@documenso/lib/client-only/providers/session';
 import { getBasePath } from '@documenso/lib/constants/app';
 import { APP_I18N_OPTIONS, type SupportedLanguageCodes } from '@documenso/lib/constants/i18n';
+import { getPrimaryColourCss } from '@documenso/lib/utils/primary-colour';
 import { createPublicEnv, env } from '@documenso/lib/utils/env';
 import { extractLocaleData } from '@documenso/lib/utils/i18n';
 import { TrpcProvider } from '@documenso/trpc/react';
@@ -117,6 +118,8 @@ export function LayoutContent({ children }: { children: React.ReactNode }) {
 
   const [theme] = useTheme();
 
+  const primaryColourCss = getPrimaryColourCss(env('NEXT_PUBLIC_PRIMARY_COLOR'));
+
   const basePath = data.basePath ?? '';
 
   // Recipient routes (signing pages) put `documenso-branded` on <body> so the
@@ -163,6 +166,11 @@ export function LayoutContent({ children }: { children: React.ReactNode }) {
               __html: `*, *::before, *::after { animation: none !important; transition-duration: 0.001s !important; transition-delay: 0s !important; }`,
             }}
           />
+        )}
+
+        {/* paperrocket-sign: NEXT_PUBLIC_PRIMARY_COLOR is the app's primary colour unless the organisation sets its own. */}
+        {primaryColourCss && (
+          <style nonce={nonce(cspNonce)} dangerouslySetInnerHTML={{ __html: primaryColourCss }} />
         )}
 
         {/* Fix: https://stackoverflow.com/questions/21147149/flash-of-unstyled-content-fouc-in-firefox-only-is-ff-slow-renderer */}

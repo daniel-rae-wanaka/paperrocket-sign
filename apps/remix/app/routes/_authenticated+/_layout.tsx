@@ -1,14 +1,21 @@
+import { getOptionalSession } from '@documenso/auth/server/lib/utils/get-session';
 import { useChildRouteFlags } from '@documenso/lib/client-only/hooks/use-child-route-flags';
 import { OrganisationProvider } from '@documenso/lib/client-only/providers/organisation';
 import { useSession } from '@documenso/lib/client-only/providers/session';
+import { getTeamSettings } from '@documenso/lib/server-only/team/get-team-settings';
 import { getSiteSettings } from '@documenso/lib/server-only/site-settings/get-site-settings';
 import { SITE_SETTINGS_BANNER_ID } from '@documenso/lib/server-only/site-settings/schemas/banner';
+import { ZCssVarsSchema } from '@documenso/lib/types/css-vars';
+import { getPrimaryColourCss } from '@documenso/lib/utils/primary-colour';
+import { buildTeamWhereQuery } from '@documenso/lib/utils/teams';
+import { prisma } from '@documenso/prisma';
 import { cn } from '@documenso/ui/lib/utils';
 import { Button } from '@documenso/ui/primitives/button';
 import { msg } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Link, Outlet } from 'react-router';
 
+import { useCspNonce } from '~/utils/nonce';
 import { AppBanner } from '~/components/general/app-banner';
 import { Header } from '~/components/general/app-header';
 import { GenericErrorLayout } from '~/components/general/generic-error-layout';
@@ -25,22 +32,80 @@ import type { Route } from './+types/_layout';
  *
  * Update values via providers.
  */
-export const shouldRevalidate = () => false;
+export const shouldRevalidate = ({
+  currentParams,
+  nextParams,
+}: {
+  currentParams: Record<string, string | undefined>;
+  nextParams: Record<string, string | undefined>;
+}) => currentParams.orgUrl !== nextParams.orgUrl || currentParams.teamUrl !== nextParams.teamUrl;
 
 export const middleware = [authenticatedMiddleware];
 
-export async function loader() {
+/**
+ * paperrocket-sign: the CSS that sets the primary colour from the current organisation's (or team's) branding colour,
+ * when branding is on and a primary colour is set. Null otherwise, so the env colour or stock colour stays.
+ */
+const loadBrandPrimaryCss = async ({
+  request,
+  params,
+}: {
+  request: Request;
+  params: Record<string, string | undefined>;
+}) => {
+  try {
+    const { user } = await getOptionalSession(request);
+
+    if (!user) {
+      return null;
+    }
+
+    let settings: { brandingEnabled: boolean; brandingColors: unknown } | null = null;
+
+    if (params.teamUrl) {
+      const team = await prisma.team.findFirst({
+        where: { url: params.teamUrl, ...buildTeamWhereQuery({ teamId: undefined, userId: user.id }) },
+        select: { id: true },
+      });
+
+      settings = team ? await getTeamSettings({ teamId: team.id }) : null;
+    } else if (params.orgUrl) {
+      const organisation = await prisma.organisation.findFirst({
+        where: { url: params.orgUrl, members: { some: { userId: user.id } } },
+        select: { organisationGlobalSettings: { select: { brandingEnabled: true, brandingColors: true } } },
+      });
+
+      settings = organisation?.organisationGlobalSettings ?? null;
+    }
+
+    if (!settings?.brandingEnabled || !settings.brandingColors) {
+      return null;
+    }
+
+    const colours = ZCssVarsSchema.safeParse(settings.brandingColors);
+
+    return colours.success ? getPrimaryColourCss(colours.data.primary) : null;
+  } catch {
+    return null;
+  }
+};
+
+export async function loader({ request, params }: Route.LoaderArgs) {
   const banner = await getSiteSettings().then((settings) =>
     settings.find((setting) => setting.id === SITE_SETTINGS_BANNER_ID),
   );
 
+  const brandPrimaryCss = await loadBrandPrimaryCss({ request, params });
+
   return {
     banner,
+    brandPrimaryCss,
   };
 }
 
 export default function Layout({ loaderData, params, matches }: Route.ComponentProps) {
-  const { banner } = loaderData;
+  const { banner, brandPrimaryCss } = loaderData;
+  const cspNonce = useCspNonce();
 
   const { user, organisations } = useSession();
 
@@ -108,6 +173,8 @@ export default function Layout({ loaderData, params, matches }: Route.ComponentP
   return (
     <OrganisationProvider organisation={currentOrganisation}>
       <TeamProvider team={currentTeam || null}>
+        {brandPrimaryCss && <style nonce={cspNonce}>{brandPrimaryCss}</style>}
+
         <div className={cn({ 'md:flex md:h-dvh md:flex-col md:overflow-hidden': layoutMode === 'settings' })}>
           <OrganisationBillingBanner />
 
