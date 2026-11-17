@@ -10,7 +10,7 @@ export const NEXT_PUBLIC_WEBAPP_URL = () => env('NEXT_PUBLIC_WEBAPP_URL') ?? 'ht
 export const BRAND_NAME = () => env('NEXT_PUBLIC_BRAND_NAME') || 'Document signing';
 
 // paperrocket-sign: AGPL section 13 source offer.
-export const SOURCE_CODE_URL = 'https://github.com/daniel-paperrocket/paperrocket-sign';
+export const SOURCE_CODE_URL = 'https://github.com/daniel-rae-wanaka/paperrocket-sign';
 
 /**
  * The sub-path the app is served under (no trailing slash), e.g. "/ESign".
