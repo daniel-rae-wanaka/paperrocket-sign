@@ -1,10 +1,11 @@
 import { BRAND_NAME, NEXT_PUBLIC_WEBAPP_URL } from '@documenso/lib/constants/app';
+import { env } from '@documenso/lib/utils/env';
 import { i18n, type MessageDescriptor } from '@lingui/core';
 
 // paperrocket-sign: brand pass. Title, description and og tags come from NEXT_PUBLIC_BRAND_NAME, no product name.
 export const appMetaTags = (title?: MessageDescriptor) => {
   const brand = BRAND_NAME();
-  const description = `Document signing for ${brand}.`;
+  const description = env('NEXT_PUBLIC_BRAND_NAME') ? `Document signing for ${brand}.` : 'Document signing.';
 
   return [
     {

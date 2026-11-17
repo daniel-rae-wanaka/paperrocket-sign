@@ -29,6 +29,7 @@ import { aiRoute } from './api/ai/route';
 import { downloadRoute } from './api/download/download';
 import { filesRoute } from './api/files/files';
 import { paperRocketEmailLogoRoute } from './api/paperrocket/email-logo';
+import { paperRocketManifestRoute } from './api/paperrocket/manifest';
 import { type AppContext, appContext } from './context';
 import { csrfMiddleware } from './csrf-middleware';
 import { appMiddleware } from './middleware';
@@ -133,6 +134,9 @@ app.route('/api/ai', aiRoute);
 
 // paperrocket-sign: email letterhead logo variants (plate, dark).
 app.route('/api/paperrocket/email-logo', paperRocketEmailLogoRoute);
+
+// paperrocket-sign: web manifest named after the brand.
+app.route('/api/paperrocket/manifest.webmanifest', paperRocketManifestRoute);
 
 // CSC OAuth routes (mounted from @documenso/ee).
 app.route('/api/csc', csc);

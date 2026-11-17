@@ -129,24 +129,24 @@ export const run = async ({ payload, io }: { payload: TSendSigningEmailJobDefini
   const recipientActionVerb = i18n._(RECIPIENT_ROLES_DESCRIPTION[recipient.role].actionVerb).toLowerCase();
 
   let emailMessage = customEmail?.message || '';
-  let emailSubject = i18n._(msg`Please ${recipientActionVerb} this document`);
+  let emailSubject = i18n._(msg`Please ${recipientActionVerb}: ${envelope.title}`);
 
   if (selfSigner) {
     emailMessage = i18n._(
       msg`You have initiated the document ${`"${envelope.title}"`} that requires you to ${recipientActionVerb} it.`,
     );
-    emailSubject = i18n._(msg`Please ${recipientActionVerb} your document`);
+    emailSubject = i18n._(msg`Please ${recipientActionVerb}: ${envelope.title}`);
   }
 
   if (isDirectTemplate) {
     emailMessage = i18n._(
       msg`A document was created by your direct template that requires you to ${recipientActionVerb} it.`,
     );
-    emailSubject = i18n._(msg`Please ${recipientActionVerb} this document created by your direct template`);
+    emailSubject = i18n._(msg`Please ${recipientActionVerb}: ${envelope.title}`);
   }
 
   if (organisationType === OrganisationType.ORGANISATION) {
-    emailSubject = i18n._(msg`${team.name} invited you to ${recipientActionVerb} a document`);
+    emailSubject = i18n._(msg`${team.name} invited you to ${recipientActionVerb}: ${envelope.title}`);
     emailMessage = customEmail?.message ?? '';
 
     if (!emailMessage) {

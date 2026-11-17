@@ -284,6 +284,14 @@ export const EnvelopeItemEditDialog = ({
                       </Button>
                     </div>
 
+                    {/* paperrocket-sign: Replace PDF, tags win. */}
+                    <p className="text-muted-foreground text-xs" data-testid="envelope-item-edit-tags-note">
+                      <Trans>
+                        Fields placed with {'{{tags}}'} in the new PDF replace the fields you placed by hand of the same
+                        type for the same recipient.
+                      </Trans>
+                    </p>
+
                     {fieldsOnExcessPages.length > 0 && (
                       <Alert variant="warning" padding="tight">
                         <AlertTriangleIcon className="h-4 w-4" />

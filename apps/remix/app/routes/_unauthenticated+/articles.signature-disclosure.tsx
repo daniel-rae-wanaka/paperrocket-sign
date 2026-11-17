@@ -1,10 +1,10 @@
-import { BRAND_NAME, SUPPORT_EMAIL } from '@documenso/lib/constants/app';
+import { BRAND_NAME_OR, SUPPORT_EMAIL } from '@documenso/lib/constants/app';
 import { Button } from '@documenso/ui/primitives/button';
 import { Trans } from '@lingui/react/macro';
 import { Link } from 'react-router';
 
 export default function SignatureDisclosure() {
-  const brand = BRAND_NAME();
+  const brand = BRAND_NAME_OR('this service');
 
   return (
     <div>

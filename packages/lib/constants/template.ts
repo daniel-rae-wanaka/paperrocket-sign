@@ -1,11 +1,12 @@
 import { msg } from '@lingui/core/macro';
 
-export const TEMPLATE_RECIPIENT_EMAIL_PLACEHOLDER_REGEX = /recipient\.\d+@documenso\.com/i;
-export const TEMPLATE_RECIPIENT_NAME_PLACEHOLDER_REGEX = /Recipient \d+/i;
+// paperrocket-sign: the placeholder address and its detector live in placeholder-recipient.ts (unit tested).
+export {
+  isTemplateRecipientEmailPlaceholder,
+  TEMPLATE_RECIPIENT_EMAIL_PLACEHOLDER_REGEX,
+} from './placeholder-recipient';
 
-export const isTemplateRecipientEmailPlaceholder = (email: string) => {
-  return TEMPLATE_RECIPIENT_EMAIL_PLACEHOLDER_REGEX.test(email);
-};
+export const TEMPLATE_RECIPIENT_NAME_PLACEHOLDER_REGEX = /Recipient \d+/i;
 
 export const DIRECT_TEMPLATE_DOCUMENTATION = [
   {

@@ -8,8 +8,10 @@ import { isRecipientAuthorized } from '@documenso/lib/server-only/document/is-re
 import { getFieldsForToken } from '@documenso/lib/server-only/field/get-fields-for-token';
 import { getRecipientByToken } from '@documenso/lib/server-only/recipient/get-recipient-by-token';
 import { getRecipientSignatures } from '@documenso/lib/server-only/recipient/get-recipient-signatures';
+import { getTeamSettings } from '@documenso/lib/server-only/team/get-team-settings';
 import { getUserByEmail } from '@documenso/lib/server-only/user/get-user-by-email';
 import { isDocumentCompleted } from '@documenso/lib/utils/document';
+import { env } from '@documenso/lib/utils/env';
 import { trpc } from '@documenso/trpc/react';
 import { DocumentShareButton } from '@documenso/ui/components/document/document-share-button';
 import { SigningCard3D } from '@documenso/ui/components/signing-card';
@@ -24,6 +26,7 @@ import { Link } from 'react-router';
 import { match } from 'ts-pattern';
 
 import { EnvelopeDownloadDialog } from '~/components/dialogs/envelope-download-dialog';
+import { AppBrandMark } from '~/components/general/app-brand-mark';
 import { ClaimAccount } from '~/components/general/claim-account';
 import { DocumentSigningAuthPageView } from '~/components/general/document-signing/document-signing-auth-page';
 import { RecipientBranding } from '~/components/general/recipient-branding';
@@ -51,6 +54,10 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 
   const branding = await loadRecipientBrandingByTeamId({ teamId: document.teamId });
 
+  // paperrocket-sign: same rule as the signing page header: the team logo only when branding is on and a logo is set.
+  const teamSettings = await getTeamSettings({ teamId: document.teamId });
+  const hasCustomBrandingLogo = teamSettings.brandingEnabled && Boolean(teamSettings.brandingLogo);
+
   const [fields, recipient] = await Promise.all([
     getFieldsForToken({ token }),
     getRecipientByToken({ token }).catch(() => null),
@@ -72,6 +79,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
       isDocumentAccessValid: false,
       recipientEmail: recipient.email,
       branding,
+      hasCustomBrandingLogo,
     } as const;
   }
 
@@ -99,6 +107,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     recipient,
     returnToHomePath,
     branding,
+    hasCustomBrandingLogo,
   };
 }
 
@@ -119,7 +128,11 @@ export default function CompletedSigningPage({ loaderData }: Route.ComponentProp
     recipientEmail,
     returnToHomePath,
     branding,
+    hasCustomBrandingLogo,
   } = loaderData;
+
+  // paperrocket-sign: NEXT_PUBLIC_DISABLE_SIGNING_SHARE=true hides the signing card "Share" button.
+  const isSigningShareDisabled = env('NEXT_PUBLIC_DISABLE_SIGNING_SHARE') === 'true';
 
   // Poll signing status every few seconds
   const { data: signingStatusData } = trpc.envelope.signingStatus.useQuery(
@@ -168,6 +181,18 @@ export default function CompletedSigningPage({ loaderData }: Route.ComponentProp
               'mb-8 p-4 md:mb-0 md:p-12': canSignUp,
             })}
           >
+            <div className="mb-6 flex justify-center">
+              {hasCustomBrandingLogo ? (
+                <img
+                  src={`/api/branding/logo/team/${document.teamId}`}
+                  alt={`${document.team?.name ?? ''}'s Logo`}
+                  className="h-8 w-auto"
+                />
+              ) : (
+                <AppBrandMark />
+              )}
+            </div>
+
             <Badge variant="neutral" size="default" className="mb-6 rounded-xl border bg-transparent">
               <span className="block max-w-[10rem] truncate font-medium hover:underline md:max-w-[20rem]">
                 {document.title}
@@ -249,11 +274,13 @@ export default function CompletedSigningPage({ loaderData }: Route.ComponentProp
               ))}
 
             <div className="mt-8 flex w-full max-w-xs flex-col items-stretch gap-4 md:w-auto md:max-w-none md:flex-row md:items-center">
-              <DocumentShareButton
-                documentId={document.id}
-                token={recipient.token}
-                className="w-full max-w-none md:flex-1"
-              />
+              {!isSigningShareDisabled && (
+                <DocumentShareButton
+                  documentId={document.id}
+                  token={recipient.token}
+                  className="w-full max-w-none md:flex-1"
+                />
+              )}
 
               {isDocumentCompleted(document) && (
                 <EnvelopeDownloadDialog

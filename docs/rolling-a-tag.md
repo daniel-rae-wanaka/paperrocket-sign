@@ -31,7 +31,7 @@ From a logged-out browser or `curl`:
 - `usePlaywrightPdf` off
 - `NEXT_PUBLIC_BRAND_NAME` set to the business name (tab titles, meta tags, signer-facing text, 2FA and passkey names, PDF signing reason); unset shows "Document signing"
 - `NEXT_PUBLIC_OIDC_PROVIDER_LOGO_URL` set to the identity provider's logo (about 20px high) if the OIDC button should show it; unset keeps the default icon
-- `NEXT_PUBLIC_DISABLE_PASSKEY_SIGNIN=true` where passkeys are not offered (hides the Passkey button)
+- `NEXT_PUBLIC_DISABLE_PASSKEY_SIGNIN=true` where passkeys are not offered (only hides the Passkey button on the sign-in page; passkeys are not disabled on the server)
 
 ## 5. Roll back
 

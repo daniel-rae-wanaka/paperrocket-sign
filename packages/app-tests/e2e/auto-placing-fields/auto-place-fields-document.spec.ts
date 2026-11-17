@@ -106,7 +106,7 @@ test.describe('PDF Placeholders with single recipient', () => {
         where: { envelopeId },
       });
 
-      const placeholderRecipient = recipients.find((recipient) => recipient.email === 'recipient.1@documenso.com');
+      const placeholderRecipient = recipients.find((recipient) => recipient.email === 'recipient.1@placeholder.invalid');
 
       const defaultRecipient = recipients.find((recipient) => recipient.email === user.email);
 

@@ -48,6 +48,15 @@ jobs:
       - name: Unit tests (Replace PDF, tags win)
         if: hashFiles('packages/lib/server-only/envelope-item/select-fields-superseded-by-tags.test.ts') != ''
         run: npm run test -w @documenso/lib -- server-only/envelope-item/select-fields-superseded-by-tags.test.ts
+      - name: Unit tests (date locale)
+        if: hashFiles('packages/lib/utils/date-locale.test.ts') != ''
+        run: npm run test -w @documenso/lib -- utils/date-locale.test.ts
+      - name: Unit tests (primary colour)
+        if: hashFiles('packages/lib/utils/primary-colour.test.ts') != ''
+        run: npm run test -w @documenso/lib -- utils/primary-colour.test.ts
+      - name: Unit tests (placeholder recipient)
+        if: hashFiles('packages/lib/constants/placeholder-recipient.test.ts') != ''
+        run: npm run test -w @documenso/lib -- constants/placeholder-recipient.test.ts
       - name: Build app
         run: npm run build
       - name: Render email and certificate snapshots

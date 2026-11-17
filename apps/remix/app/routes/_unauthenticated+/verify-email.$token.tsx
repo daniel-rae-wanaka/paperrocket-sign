@@ -1,6 +1,6 @@
 import { authClient } from '@documenso/auth/client';
 import { useOptionalSession } from '@documenso/lib/client-only/providers/session';
-import { BRAND_NAME } from '@documenso/lib/constants/app';
+import { BRAND_NAME_OR } from '@documenso/lib/constants/app';
 import { EMAIL_VERIFICATION_STATE } from '@documenso/lib/constants/email';
 import { Button } from '@documenso/ui/primitives/button';
 import { useToast } from '@documenso/ui/primitives/use-toast';
@@ -28,7 +28,7 @@ export const loader = ({ params }: Route.LoaderArgs) => {
 
 export default function VerifyEmailPage({ loaderData }: Route.ComponentProps) {
   const { token } = loaderData;
-  const brand = BRAND_NAME();
+  const brand = BRAND_NAME_OR('this service');
 
   const { refreshSession } = useOptionalSession();
   const { _ } = useLingui();

@@ -66,10 +66,13 @@ const Letterhead = () => {
     : size;
   const isWide = logo.width / logo.height >= 3;
   const wideClass = isWide ? ' pr-logo-wide' : '';
+  // Only a one-colour logo gets a dark version. Any other logo keeps its plate in dark mode, so it must not
+  // carry pr-lt (which dark mode hides), or the header is blank in Apple Mail and other dark-aware clients.
+  const hasDarkVersion = logo.kind === 'one-colour';
 
   const lightImage = (
     <Img
-      className={`pr-lt${wideClass}`}
+      className={`${hasDarkVersion ? 'pr-lt' : 'pr-logo'}${wideClass}`}
       src={getLogoUrl(logo, 'plate', size)}
       alt={theme.name}
       width={lightSize.width}
@@ -86,7 +89,7 @@ const Letterhead = () => {
   );
 
   const darkImage =
-    logo.kind === 'one-colour' ? (
+    hasDarkVersion ? (
       <Img
         className={`pr-dk${wideClass}`}
         src={getLogoUrl(logo, 'dark', size)}

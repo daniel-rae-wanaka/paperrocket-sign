@@ -5,6 +5,8 @@ import type { Recipient } from '@prisma/client';
 import { FieldType } from '@prisma/client';
 import { match } from 'ts-pattern';
 
+import { getPlaceholderRecipientEmail } from '../../constants/placeholder-recipient';
+
 /**
  * Ensure all required fonts are registered in the skia-canvas FontLibrary.
  *
@@ -145,7 +147,7 @@ const extractRecipientPlaceholder = (placeholder: string): RecipientPlaceholderI
   const recipientIndex = Number(indexMatch[1]);
 
   return {
-    email: `recipient.${recipientIndex}@documenso.com`,
+    email: getPlaceholderRecipientEmail(recipientIndex),
     name: `Recipient ${recipientIndex}`,
     recipientIndex,
   };

@@ -1,4 +1,3 @@
-import { BRAND_NAME } from '@documenso/lib/constants/app';
 import { useOptionalSession } from '@documenso/lib/client-only/providers/session';
 import { getPublicProfileByUrl } from '@documenso/lib/server-only/profile/get-public-profile-by-url';
 import { formatAvatarUrl } from '@documenso/lib/utils/avatars';
@@ -49,7 +48,6 @@ export async function loader({ params }: Route.LoaderArgs) {
 }
 
 export default function PublicProfilePage({ loaderData }: Route.ComponentProps) {
-  const brand = BRAND_NAME();
   const { publicProfile } = loaderData;
 
   const { profile, templates } = publicProfile;
@@ -130,7 +128,7 @@ export default function PublicProfilePage({ loaderData }: Route.ComponentProps) 
             {!user?.id && (
               <span className="mt-2 inline-block">
                 <Trans>
-                  While waiting for them to do so you can create your own {brand} account and get started with
+                  While waiting for them to do so you can create your own account and get started with
                   document signing right away.
                 </Trans>
               </span>

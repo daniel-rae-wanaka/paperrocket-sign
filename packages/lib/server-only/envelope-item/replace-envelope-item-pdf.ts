@@ -165,13 +165,36 @@ export const UNSAFE_replaceEnvelopeItemPdf = async ({
         // paperrocket-sign: Replace PDF, tags win. Drop the old fields the tags recreate so none end up twice.
         const existingFields = await tx.field.findMany({
           where: { envelopeId: envelope.id, envelopeItemId, inserted: false },
-          select: { id: true, type: true, recipientId: true },
+          select: { id: true, secondaryId: true, type: true, recipientId: true, recipient: { select: { email: true } } },
         });
 
         const supersededIds = selectFieldsSupersededByTags(existingFields, fieldsToCreate);
 
         if (supersededIds.length > 0) {
           await tx.field.deleteMany({ where: { id: { in: supersededIds } } });
+
+          // One audit entry per superseded field, so the log shows which hand-placed fields the tags replaced.
+          const supersededFields = existingFields.filter((field) => supersededIds.includes(field.id));
+
+          await tx.documentAuditLog.createMany({
+            data: supersededFields.map((field) =>
+              createDocumentAuditLogData({
+                type: DOCUMENT_AUDIT_LOG_TYPE.FIELD_DELETED,
+                envelopeId: envelope.id,
+                data: {
+                  fieldId: field.secondaryId,
+                  fieldRecipientEmail: field.recipient?.email ?? '',
+                  fieldRecipientId: field.recipientId,
+                  fieldType: field.type,
+                },
+                user: {
+                  name: user.name,
+                  email: user.email,
+                },
+                requestMetadata: apiRequestMetadata.requestMetadata,
+              }),
+            ),
+          });
         }
 
         await tx.field.createMany({
