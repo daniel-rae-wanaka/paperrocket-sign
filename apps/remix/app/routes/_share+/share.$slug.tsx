@@ -1,4 +1,4 @@
-import { BRAND_NAME, NEXT_PUBLIC_WEBAPP_URL } from '@documenso/lib/constants/app';
+import { BRAND_NAME, BRAND_NAME_OR, NEXT_PUBLIC_WEBAPP_URL } from '@documenso/lib/constants/app';
 import { getDocumentByAccessToken } from '@documenso/lib/server-only/document/get-document-by-access-token';
 import { redirect, useLoaderData } from 'react-router';
 
@@ -13,14 +13,14 @@ export function meta({ params: { slug } }: Route.MetaArgs) {
 
   return [
     { title: `Shared document - ${BRAND_NAME()}` },
-    { description: `I just signed a document with ${BRAND_NAME()}.` },
+    { description: `I just signed a document with ${BRAND_NAME_OR('this service')}.` },
     {
       property: 'og:title',
       content: BRAND_NAME(),
     },
     {
       property: 'og:description',
-      content: `I just signed with ${BRAND_NAME()}.`,
+      content: `I just signed with ${BRAND_NAME_OR('this service')}.`,
     },
     {
       property: 'og:type',
@@ -40,7 +40,7 @@ export function meta({ params: { slug } }: Route.MetaArgs) {
     },
     {
       name: 'twitter:description',
-      content: `I just signed with ${BRAND_NAME()}.`,
+      content: `I just signed with ${BRAND_NAME_OR('this service')}.`,
     },
   ];
 }
