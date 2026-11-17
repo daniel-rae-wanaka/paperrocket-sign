@@ -103,3 +103,13 @@ Upstream files touched:
 - `.env.example`, `docs/rolling-a-tag.md`: the new env vars.
 
 Deliberately left (not visible to signers or logged-out visitors): admin and settings screens, API token and webhook dialogs, authenticated app header and nav, embed screens, expired-licence banner, organisation billing banner, support page, docs, the Documenso wordmark in `branding-logo.tsx` (shown only when a team has no logo set), sender name default (set by `NEXT_PRIVATE_SMTP_FROM_NAME`), `X-Documenso-*` mail and webhook headers, the email-2FA issuer (never shown).
+
+## Brand pass (pr.2): app header mark
+
+The logged-in header no longer shows the Documenso logo or wordmark. New `apps/remix/app/components/general/app-brand-mark.tsx` shows the organisation's own logo (`/api/branding/logo/organisation/<id>`, falls back when the route answers 404 or 400) and otherwise the `NEXT_PUBLIC_BRAND_NAME` text. Upstream files touched:
+- `apps/remix/app/components/general/app-header.tsx`: `BrandingLogo` replaced by `AppBrandMark`.
+- `apps/remix/app/components/general/app-nav-mobile.tsx`: Documenso logo image in the mobile menu replaced by `AppBrandMark`.
+- `apps/remix/app/components/general/envelope-editor/envelope-editor-header.tsx`: non-embedded fallback logo replaced by `AppBrandMark`.
+- `apps/remix/app/components/general/envelope-signing/envelope-signer-header.tsx`: fallback (no team logo) replaced by `AppBrandMark`.
+- `apps/remix/app/routes/_profile+/_layout.tsx`: public profile header logos replaced by `AppBrandMark` (and the earlier alt text edit there is gone).
+`branding-logo.tsx` stays for the embed, certificate and audit-log HTML routes.
