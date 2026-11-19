@@ -22,7 +22,7 @@ export type DocumentInviteEmailTemplateProps = Partial<TemplateDocumentInvitePro
    * actually contacted them.
    */
   newAccountWarningSenderEmail?: string;
-  /** paperrocket-sign: in a sequential envelope, the signer who just finished ("Daniel Rae has signed. It's your turn"). */
+  /** paperrocket-sign: in a sequential envelope, the signer who just finished ("Alex Morgan has signed. It's your turn"). */
   previousSignerName?: string;
 };
 

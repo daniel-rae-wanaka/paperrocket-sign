@@ -155,7 +155,8 @@ export const run = async ({ payload, io }: { payload: TSendSigningEmailJobDefini
       const inviterName = user.name || '';
 
       emailMessage = i18n._(
-        settings.includeSenderDetails
+        // paperrocket-sign: a branded organisation never names the account holder.
+        settings.includeSenderDetails && !branding.brandingEnabled
           ? msg`${inviterName} on behalf of "${team.name}" has invited you to ${recipientActionVerb} the document "${envelope.title}".`
           : msg`${team.name} has invited you to ${recipientActionVerb} the document "${envelope.title}".`,
       );
@@ -179,6 +180,8 @@ export const run = async ({ payload, io }: { payload: TSendSigningEmailJobDefini
           where: {
             envelopeId: envelope.id,
             signingStatus: SigningStatus.SIGNED,
+            // Only signers: CC, viewers and approvers are stored as SIGNED too and would read "X has signed".
+            role: RecipientRole.SIGNER,
             signingOrder: { lt: recipient.signingOrder },
           },
           orderBy: [{ signingOrder: 'desc' }, { signedAt: 'desc' }],
