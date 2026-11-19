@@ -24,6 +24,8 @@ export type PaperRocketTheme = {
   siteHref: string | null;
   siteLabel: string | null;
   detailLines: string[];
+  /** Organisation branding is switched on: emails speak for the organisation, not the account holder. */
+  isBranded: boolean;
 };
 
 const ThemeContext = createContext<PaperRocketTheme | null>(null);
@@ -80,6 +82,7 @@ export const useBuildPaperRocketTheme = (fallbackSiteUrl: string | null): PaperR
     logoHref: brandingUrl,
     siteHref,
     siteLabel: siteHref ? (URL.parse(siteHref)?.host ?? null) : null,
+    isBranded,
     // The first detail line is often the business name itself; the footer already shows the name.
     detailLines: detailLines[0] === name ? detailLines.slice(1) : detailLines,
   };
