@@ -228,6 +228,8 @@ export const Facts = ({ rows }: FactsProps) => {
               }}
             >
               {row.label}
+              {/* Hidden in the HTML, kept in the plain-text part so it reads "Your part: Signer", not "Your partSigner". */}
+              <span style={{ display: 'none', msoHide: 'all' } as React.CSSProperties}>: </span>
             </td>
             <td
               className="pr-fact-v"
@@ -240,6 +242,8 @@ export const Facts = ({ rows }: FactsProps) => {
               }}
             >
               {row.value}
+              {/* Hidden line break: one fact per line in the plain-text part. */}
+              <br style={{ display: 'none', msoHide: 'all' } as React.CSSProperties} />
             </td>
           </tr>
         ))}

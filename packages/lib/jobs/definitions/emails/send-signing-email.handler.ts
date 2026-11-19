@@ -3,12 +3,14 @@ import { isRecipientEmailValidForSending } from '@documenso/lib/utils/recipients
 import { prisma } from '@documenso/prisma';
 import { msg } from '@lingui/core/macro';
 import {
+  DocumentSigningOrder,
   DocumentSource,
   DocumentStatus,
   EnvelopeType,
   OrganisationType,
   RecipientRole,
   SendStatus,
+  SigningStatus,
 } from '@prisma/client';
 import { createElement } from 'react';
 
@@ -153,7 +155,8 @@ export const run = async ({ payload, io }: { payload: TSendSigningEmailJobDefini
       const inviterName = user.name || '';
 
       emailMessage = i18n._(
-        settings.includeSenderDetails
+        // paperrocket-sign: a branded organisation never names the account holder.
+        settings.includeSenderDetails && !branding.brandingEnabled
           ? msg`${inviterName} on behalf of "${team.name}" has invited you to ${recipientActionVerb} the document "${envelope.title}".`
           : msg`${team.name} has invited you to ${recipientActionVerb} the document "${envelope.title}".`,
       );
@@ -169,6 +172,23 @@ export const run = async ({ payload, io }: { payload: TSendSigningEmailJobDefini
   const assetBaseUrl = NEXT_PUBLIC_WEBAPP_URL() || 'http://localhost:3000';
   const signDocumentLink = `${NEXT_PUBLIC_WEBAPP_URL()}/sign/${recipient.token}`;
   const reportUrl = `${NEXT_PUBLIC_WEBAPP_URL()}/report/${recipient.token}`;
+
+  // paperrocket-sign: in a sequential envelope, name the signer who just finished so the next one knows it is their turn.
+  const previousSigner =
+    documentMeta?.signingOrder === DocumentSigningOrder.SEQUENTIAL && recipient.signingOrder !== null
+      ? await prisma.recipient.findFirst({
+          where: {
+            envelopeId: envelope.id,
+            signingStatus: SigningStatus.SIGNED,
+            // Only signers: CC, viewers and approvers are stored as SIGNED too and would read "X has signed".
+            role: RecipientRole.SIGNER,
+            signingOrder: { lt: recipient.signingOrder },
+          },
+          orderBy: [{ signingOrder: 'desc' }, { signedAt: 'desc' }],
+          select: { name: true, email: true },
+        })
+      : null;
+  const previousSignerName = previousSigner ? previousSigner.name || previousSigner.email : undefined;
 
   const showNewAccountWarning =
     !selfSigner &&
@@ -193,6 +213,7 @@ export const run = async ({ payload, io }: { payload: TSendSigningEmailJobDefini
     includeSenderDetails: settings.includeSenderDetails,
     reportUrl,
     newAccountWarningSenderEmail: showNewAccountWarning ? user.email : undefined,
+    previousSignerName,
   });
 
   if (isRecipientEmailValidForSending(recipient)) {

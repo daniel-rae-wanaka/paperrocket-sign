@@ -238,7 +238,8 @@ export const resendDocument = async ({ id, userId, recipients, teamId, requestMe
           const inviterName = user.name || user.email;
 
           emailMessage = i18n._(
-            settings.includeSenderDetails
+            // paperrocket-sign: a branded organisation never names the account holder.
+            settings.includeSenderDetails && !branding.brandingEnabled
               ? msg`${inviterName} on behalf of "${envelope.team.name}" has invited you to ${recipientActionVerb} the document "${envelope.title}".`
               : msg`${envelope.team.name} has invited you to ${recipientActionVerb} the document "${envelope.title}".`,
           );
