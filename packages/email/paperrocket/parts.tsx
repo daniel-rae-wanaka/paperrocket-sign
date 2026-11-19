@@ -242,6 +242,8 @@ export const Facts = ({ rows }: FactsProps) => {
               }}
             >
               {row.value}
+              {/* Hidden line break: one fact per line in the plain-text part. */}
+              <br style={{ display: 'none', msoHide: 'all' } as React.CSSProperties} />
             </td>
           </tr>
         ))}

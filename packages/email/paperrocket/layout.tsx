@@ -134,9 +134,9 @@ type FooterProps = Pick<LayoutProps, 'senderName' | 'footerNote' | 'reportUrl'>;
 
 const Footer = ({ senderName, footerNote = 'link', reportUrl }: FooterProps) => {
   const theme = usePaperRocketTheme();
-  // paperrocket-sign: a branded organisation is who the reader hears from ("Reply and 808 Architectural Builders will
+  // paperrocket-sign: a branded organisation is who the reader hears from ("Reply and Harbour Joinery will
   // hear about it"), not the person whose account sent it.
-  const firstName = theme.isBranded && theme.name ? theme.name : getFirstName(senderName);
+  const firstName = theme.isBranded ? theme.name : getFirstName(senderName);
 
   const noteStyle: React.CSSProperties = {
     margin: '0 auto',
