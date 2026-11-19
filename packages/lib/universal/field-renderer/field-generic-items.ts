@@ -4,8 +4,10 @@ import Konva from 'konva';
 import type { FieldToRender, RenderFieldElementOptions } from './field-renderer';
 import { calculateFieldPosition } from './field-renderer';
 
+// paperrocket-sign: filled-in values (names, dates, text) print in Inter, which the server already registers
+// (server-only/pdf/helpers.ts). Noto stays as the fallback for characters Inter doesn't cover.
 export const konvaTextFontFamily =
-  '"Noto Sans", "Noto Sans Japanese", "Noto Sans Chinese", "Noto Sans Korean", sans-serif';
+  '"Inter", "Noto Sans", "Noto Sans Japanese", "Noto Sans Chinese", "Noto Sans Korean", sans-serif';
 export const konvaTextFill = 'black';
 
 export const upsertFieldGroup = (field: FieldToRender, options: RenderFieldElementOptions): Konva.Group => {
