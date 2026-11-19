@@ -691,9 +691,13 @@ export async function renderCertificate({
     ...(completedAt ? [formatZonedDateTimeLong(completedAt, zone)] : []),
   ].join(' · ');
 
-  const senderLine = branding.businessName
-    ? `${envelopeOwner.name || envelopeOwner.email}, ${branding.businessName}`
-    : envelopeOwner.name || envelopeOwner.email;
+  // paperrocket-sign: a branded organisation sends as itself; the account holder is not named.
+  const senderLine =
+    branding.isBranded && branding.businessName
+      ? branding.businessName
+      : branding.businessName
+        ? `${envelopeOwner.name || envelopeOwner.email}, ${branding.businessName}`
+        : envelopeOwner.name || envelopeOwner.email;
 
   const facts: { label: string; value: string; mono?: boolean }[] = [
     { label: i18n._(msg`Sent by`), value: senderLine },

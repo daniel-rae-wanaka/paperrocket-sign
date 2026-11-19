@@ -75,13 +75,14 @@ type RenderOverviewOptions = {
   envelope: GenerateAuditLogsOptions['envelope'];
   envelopeItems: string[];
   envelopeOwner: GenerateAuditLogsOptions['envelopeOwner'];
+  ownerLabel?: string;
   recipients: AuditLogRecipient[];
   zone: string;
   i18n: I18n;
 };
 
 const renderOverview = (options: RenderOverviewOptions): Block => {
-  const { envelope, envelopeItems, envelopeOwner, recipients, zone, i18n } = options;
+  const { envelope, envelopeItems, envelopeOwner, ownerLabel, recipients, zone, i18n } = options;
 
   const group = new Konva.Group();
   group.add(createHairline(0));
@@ -92,7 +93,7 @@ const renderOverview = (options: RenderOverviewOptions): Block => {
   const columnXs = [0, columnWidths[0] + columnGap, columnWidths[0] + columnWidths[1] + columnGap * 2];
 
   const facts: { label: string; value: string; mono?: boolean }[] = [
-    { label: i18n._(msg`Owner`), value: `${envelopeOwner.name} (${envelopeOwner.email})` },
+    { label: i18n._(msg`Owner`), value: ownerLabel ?? `${envelopeOwner.name} (${envelopeOwner.email})` },
     {
       label: i18n._(msg`Status`),
       value: i18n._(envelope.deletedAt ? msg`Deleted` : DOCUMENT_STATUS[envelope.status].description),
@@ -425,7 +426,9 @@ export async function renderAuditLogs({
     return { group, bottom: ruleY + 20 };
   };
 
-  const overview = renderOverview({ envelope, envelopeItems, envelopeOwner, recipients, zone, i18n });
+  // paperrocket-sign: a branded organisation owns the envelope as itself, not as the account holder.
+  const ownerLabel = branding.isBranded && branding.businessName ? branding.businessName : undefined;
+  const overview = renderOverview({ envelope, envelopeItems, envelopeOwner, ownerLabel, recipients, zone, i18n });
 
   const rows = auditLogs.map((auditLog) =>
     renderRow({ auditLog, zone, primaryColor: branding.primaryColor, i18n }),

@@ -45,7 +45,7 @@ export const loadPdfBranding = async ({ teamId }: { teamId: number }): Promise<P
   const businessName = team?.organisation.name ?? team?.name ?? '';
 
   if (!settings.brandingEnabled) {
-    return { businessName, primaryColor: DEFAULT_PDF_BRAND_COLOR, logo: null, companyDetails: null };
+    return { businessName, primaryColor: DEFAULT_PDF_BRAND_COLOR, logo: null, companyDetails: null, isBranded: false };
   }
 
   const parsedColors = settings.brandingColors ? ZCssVarsSchema.safeParse(settings.brandingColors) : null;
@@ -62,5 +62,5 @@ export const loadPdfBranding = async ({ teamId }: { teamId: number }): Promise<P
 
   const companyDetails = settings.brandingCompanyDetails?.trim() ? settings.brandingCompanyDetails.trim() : null;
 
-  return { businessName, primaryColor, logo, companyDetails };
+  return { businessName, primaryColor, logo, companyDetails, isBranded: true };
 };

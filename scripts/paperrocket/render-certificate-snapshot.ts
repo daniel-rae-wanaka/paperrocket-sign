@@ -232,6 +232,7 @@ export default async (outDir: string): Promise<void> => {
       primaryColor: '#0F5C8C',
       logo: await buildLogo(),
       companyDetails: 'Example Consulting Ltd\nProject management and advice\nWānaka\n03 555 0100',
+      isBranded: true,
     };
 
     const drawnSignature = await buildDrawnSignature();

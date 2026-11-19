@@ -9,6 +9,8 @@ export type PdfBranding = {
   logo: Uint8Array | null;
   /** `brandingCompanyDetails`, shown in the footer. */
   companyDetails: string | null;
+  /** Branding is switched on: the organisation speaks as itself, never as the account holder. */
+  isBranded: boolean;
 };
 
 export const DEFAULT_PDF_BRANDING: PdfBranding = {
@@ -16,4 +18,5 @@ export const DEFAULT_PDF_BRANDING: PdfBranding = {
   primaryColor: DEFAULT_PDF_BRAND_COLOR,
   logo: null,
   companyDetails: null,
+  isBranded: false,
 };
