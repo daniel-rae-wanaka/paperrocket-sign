@@ -4,7 +4,7 @@ import { useLingui } from '@lingui/react';
 import { Trans } from '@lingui/react/macro';
 import { OrganisationType, RecipientRole } from '@prisma/client';
 
-import { getFirstName, PaperRocketEmail, SAMPLE, Strong } from '../paperrocket';
+import { getFirstName, PaperRocketEmail, SAMPLE, Strong, usePaperRocketTheme } from '../paperrocket';
 import type { TemplateDocumentInviteProps } from '../template-components/template-document-invite';
 
 export type DocumentInviteEmailTemplateProps = Partial<TemplateDocumentInviteProps> & {
@@ -22,6 +22,8 @@ export type DocumentInviteEmailTemplateProps = Partial<TemplateDocumentInvitePro
    * actually contacted them.
    */
   newAccountWarningSenderEmail?: string;
+  /** paperrocket-sign: in a sequential envelope, the signer who just finished ("Daniel Rae has signed. It's your turn"). */
+  previousSignerName?: string;
 };
 
 export const DocumentInviteEmailTemplate = ({
@@ -37,12 +39,21 @@ export const DocumentInviteEmailTemplate = ({
   organisationType,
   reportUrl,
   newAccountWarningSenderEmail,
+  previousSignerName,
 }: DocumentInviteEmailTemplateProps) => {
   const { _ } = useLingui();
+  // paperrocket-sign: with organisation branding on, the email speaks for the organisation and never names the
+  // account holder who happens to own the envelope.
+  const theme = usePaperRocketTheme();
+  const isBranded = theme.isBranded;
+  if (isBranded) {
+    teamName = theme.name;
+    includeSenderDetails = false;
+  }
 
   const action = _(RECIPIENT_ROLES_DESCRIPTION[role].actionVerb).toLowerCase();
 
-  const isOrganisation = organisationType === OrganisationType.ORGANISATION && Boolean(teamName);
+  const isOrganisation = (isBranded || organisationType === OrganisationType.ORGANISATION) && Boolean(teamName);
   const showSenderName = !isOrganisation || Boolean(includeSenderDetails);
   const messageSender = showSenderName ? getFirstName(inviterName) : teamName;
 
@@ -54,6 +65,10 @@ export const DocumentInviteEmailTemplate = ({
 
   if (selfSigner) {
     preheader = _(msg`Please ${action} your document "${documentName}".`);
+  }
+
+  if (previousSignerName) {
+    preheader = _(msg`${previousSignerName} has signed "${documentName}". It's your turn to ${action}.`);
   }
 
   let eyebrow = _(msg`Document to sign`);
@@ -82,7 +97,13 @@ export const DocumentInviteEmailTemplate = ({
     </Trans>
   );
 
-  if (selfSigner) {
+  if (previousSignerName) {
+    lede = (
+      <Trans>
+        <Strong>{previousSignerName}</Strong> has signed. It's your turn to {action}.
+      </Trans>
+    );
+  } else if (selfSigner) {
     lede = <Trans>Please {action} your document.</Trans>;
   } else if (isOrganisation && includeSenderDetails) {
     lede = (
